@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  name           String
+  username       String   @unique
+  password       String
+  role           Role     @default(PASSERBY)
+  profilePicture String?
+  createdAt      DateTime @default(now())
+
+  Memories       Memory[]
+  MemoryLikes    MemoryLike[]
+  Comments       Comment[]
+  CommentLikes   CommentLike[]
+  CommentReplies CommentReply[]
+  Quotes         Quote[]
+  Timelines      Timeline[]
+}
+
+model Memory {
+  id          String    @id @default(cuid())
+  userId      String
+  timelineId  String?
+  title       String?
+  description String?
+  type        MediaType
+  url         String
+  views       Int       @default(0)
+  capturedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  isPublic    Boolean   @default(false)
+  isPinned    Boolean   @default(false)
+  isDeleted   Boolean   @default(false)
+
+  User             User              @relation(fields: [userId], references: [id])
+  Timeline         Timeline?         @relation(fields: [timelineId], references: [id])
+  MemorySoundtrack MemorySoundtrack?
+  Tags             Tag[]             @relation("MemoryTags")
+  MemoryLikes      MemoryLike[]
+  Comments         Comment[]
+}
+
+model MemorySoundtrack {
+  id        String   @id @default(cuid())
+  memoryId  String   @unique
+  songId    String
+  startTime Int
+  endTime   Int
+  createdAt DateTime @default(now())
+
+  Memory Memory @relation(fields: [memoryId], references: [id])
+  Song   Song   @relation(fields: [songId], references: [id])
+}
+
+model MemoryLike {
+  id        String   @id @default(cuid())
+  userId    String
+  memoryId  String
+  createdAt DateTime @default(now())
+
+  User   User   @relation(fields: [userId], references: [id])
+  Memory Memory @relation(fields: [memoryId], references: [id])
+
+  @@unique([userId, memoryId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  userId    String
+  memoryId  String
+  content   String
+  createdAt DateTime @default(now())
+
+  User           User           @relation(fields: [userId], references: [id])
+  Memory         Memory         @relation(fields: [memoryId], references: [id])
+  CommentReplies CommentReply[]
+  CommentLikes   CommentLike[]
+}
+
+model CommentLike {
+  id        String   @id @default(cuid())
+  userId    String
+  commentId String
+  createdAt DateTime @default(now())
+
+  User    User    @relation(fields: [userId], references: [id])
+  Comment Comment @relation(fields: [commentId], references: [id])
+
+  @@unique([userId, commentId])
+}
+
+model CommentReply {
+  id        String   @id @default(cuid())
+  userId    String
+  commentId String
+  content   String
+  createdAt DateTime @default(now())
+
+  User    User    @relation(fields: [userId], references: [id])
+  Comment Comment @relation(fields: [commentId], references: [id])
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
+
+  Memories Memory[] @relation("MemoryTags")
+}
+
+model Quote {
+  id        String   @id @default(cuid())
+  userId    String
+  content   String
+  author    String?
+  isPinned  Boolean  @default(false)
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  User User @relation(fields: [userId], references: [id])
+}
+
+model Timeline {
+  id     String   @id @default(cuid())
+  userId String
+  title  String?
+  date   DateTime
+
+  User     User     @relation(fields: [userId], references: [id])
+  Memories Memory[]
+}
+
+model Song {
+  id        String   @id @default(cuid())
+  title     String
+  artist    String
+  audioUrl  String
+  duration  Int
+  createdAt DateTime @default(now())
+
+  UsedIn MemorySoundtrack[]
+}
+
+enum Role {
+  WRITER_OF_MEMORY
+  PASSERBY
+}
+
+enum MediaType {
+  PHOTO
+  VIDEO
+}
