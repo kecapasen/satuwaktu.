@@ -1,0 +1,1 @@
+{"version":3,"file":"update-memory.dto.d.ts","sourceRoot":"","sources":["update-memory.dto.ts"],"names":[],"mappings":"AAQA,qBAAa,eAAe;IAI1B,KAAK,CAAC,EAAE,MAAM,CAAC;IAKf,WAAW,CAAC,EAAE,MAAM,CAAC;IAIrB,UAAU,CAAC,EAAE,IAAI,CAAC;IAIlB,QAAQ,EAAE,OAAO,CAAS;IAI1B,QAAQ,EAAE,OAAO,CAAS;IAI1B,SAAS,EAAE,OAAO,CAAS;IAI3B,UAAU,CAAC,EAAE,MAAM,CAAC;CACrB"}
