@@ -4,9 +4,12 @@ import "./globals.css";
 
 const playfair = Playfair({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-playfair",
 });
 const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
   variable: "--font-plusJakartaSans",
 });
 
@@ -22,9 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className={`${playfair.variable} ${plusJakartaSans.variable}`}>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

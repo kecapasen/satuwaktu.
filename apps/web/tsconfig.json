@@ -1,6 +1,9 @@
 {
   "extends": "@satuwaktu/typescript-config/nextjs.json",
   "compilerOptions": {
+    "paths": {
+      "@/*": ["./app/*"]
+    },
     "plugins": [
       {
         "name": "next"
