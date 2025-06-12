@@ -1,17 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-
-const playfair = Playfair({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
-  variable: "--font-playfair",
-});
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700", "800"],
-  variable: "--font-plusJakartaSans",
-});
 
 export const metadata: Metadata = {
   title: "satuwaktu.",
