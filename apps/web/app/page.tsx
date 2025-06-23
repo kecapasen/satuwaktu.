@@ -165,6 +165,57 @@ const timeline = [
 ];
 
 const Home = () => {
+  const audioRef = React.useRef<HTMLAudioElement>(null);
+  const fadeIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
+  const loopIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const previewStart = 60;
+    const previewDuration = 15;
+
+    if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+    if (loopIntervalRef.current) clearInterval(loopIntervalRef.current);
+
+    audio.muted = false;
+    audio.currentTime = previewStart;
+    audio.volume = 0;
+    audio.play();
+
+    fadeIntervalRef.current = setInterval(() => {
+      if (!audio || audio.paused) return;
+      if (audio.volume < 1) {
+        audio.volume = Math.min(audio.volume + 0.05, 1);
+      } else {
+        clearInterval(fadeIntervalRef.current!);
+      }
+    }, 100);
+    loopIntervalRef.current = setInterval(() => {
+      if (!audio) return;
+      if (audio.currentTime >= previewStart + previewDuration) {
+        audio.currentTime = previewStart;
+      }
+    }, 200);
+  };
+
+  const handleMouseLeave = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.pause();
+
+    if (fadeIntervalRef.current) {
+      clearInterval(fadeIntervalRef.current);
+      fadeIntervalRef.current = null;
+    }
+    if (loopIntervalRef.current) {
+      clearInterval(loopIntervalRef.current);
+      loopIntervalRef.current = null;
+    }
+  };
+
   return (
     <div className="min-h-dvh">
       <Navbar />
@@ -176,7 +227,12 @@ const Home = () => {
           viewport={{ once: true }}
           className="w-full flex items-center"
         >
-          <Card className="h-96 aspect-square relative group overflow-hidden border-stone-800 w-full cursor-pointer">
+          <Card
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            className="h-96 aspect-square relative group overflow-hidden border-stone-800 w-full cursor-pointer"
+          >
+            <audio ref={audioRef} src="/music.mp3" preload="auto" muted />
             <Image
               src="/hero.jpeg"
               alt="satuwaktu."
